@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home page</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+    <body>
+        <nav>
+            <ul>
+                <li><a class="active" href="/home">Home</a></li>
+                <li><a href="/sources">List of sources</a></li>
+                <li><a href="/development">Development</a></li>
+            </ul>
+        </nav>
+        <div class="separator"></div>
+        <main>
+            <form action="/home" method="POST" enctype="multipart/form-data">
+                <ul class="mainForm">
+                    <li>
+                        <label>Display name <span class="required">*</span>
+                            <input type="text" name="nickname" class="field" placeholder="Your display name" />
+                        </label>
+                    </li>
+                    <li>
+                        <label>Email
+                            <input type="text" name="email" class="field" placeholder="Your email" />
+                        </label>
+                    </li>
+                    <li>
+                        <label> Description about content file
+                            <textarea name="description" rows="10" class="field" placeholder="Type here"></textarea>
+                        </label>
+                    </li>
+                    <li>
+                        <label>Choose mp3 file to upload <span class="required">*</span>
+                            <input type="file" name = "file" class="field" accept=".mp3">
+                        </label>
+                    </li>
+                    <li>
+                        <input type="submit" class="field" value="Send to server" />
+                    </li>
+                </ul>
+            </form>
+        </main>
+        <div class="separator"></div>
+        <footer>
+            <h1>© All rights reserved 2021 </h1>
+        </footer>
+    </body>
+</html>

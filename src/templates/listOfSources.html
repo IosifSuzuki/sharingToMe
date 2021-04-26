@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{.Title}}</title>
+        <link rel="stylesheet" href="/static/main.css">
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a class="active" href="/sources">List of sources</a></li>
+                <li><a href="/development">Development</a></li>
+            </ul>
+        </nav>
+        <div class="separator"></div>
+        <div>
+            {{if not .Posts}}
+                <p>Not started yet.</p>
+            {{else}}
+                <table class="list">
+                    <tr>
+                        <th>#</th>
+                        <th>Country</th>
+                        <th>Sender</th>
+                        <th>About file</th>
+                        <th>Date published</th>
+                        <th>Play</th>
+                    </tr>
+                    {{range .Posts}}
+                    <tr>
+                        <td>{{.Id}}</td>
+                        <td><img height="10px" width="15px" src="{{.Publisher.Flag.String}}" alt="flag of the country"></td>
+                        <td>{{.Publisher.Nickname}}</td>
+                        <td>{{.Description}}</td>
+                        <td>{{.Publisher.PrettyDate}}
+                        <td>
+                            <audio controls>
+                                <source src={{.RemoteURL}} type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </td>
+
+                    </tr>
+                    {{end}}
+                </table>
+            {{end}}
+
+        </div>
+        <div class="separator"></div>
+        <footer>
+            <h1>© All rights reserved 2021 </h1>
+        </footer>
+    </body>
+</html>
