@@ -6,13 +6,7 @@
         <link rel="stylesheet" href="/static/main.css">
     </head>
     <body>
-        <nav>
-            <ul>
-                <li><a href="/home">Home</a></li>
-                <li><a class="active" href="/sources">List of sources</a></li>
-                <li><a href="/development">Development</a></li>
-            </ul>
-        </nav>
+        {{template "navigation.gohtml" 1}}
         <div class="separator"></div>
         <div>
             {{if not .Posts}}
@@ -48,8 +42,6 @@
 
         </div>
         <div class="separator"></div>
-        <footer>
-            <h1>© All rights reserved 2021 </h1>
-        </footer>
+        {{template "footer.gohtml"}}
     </body>
 </html>

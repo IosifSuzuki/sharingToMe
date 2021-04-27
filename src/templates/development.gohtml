@@ -6,44 +6,38 @@
     <link rel="stylesheet" href="/static/main.css">
 </head>
 <body>
-<nav>
-    <ul>
-        <li><a href="/home">Home</a></li>
-        <li><a href="/sources">List of sources</a></li>
-        <li><a class="active" href="/development">Development</a></li>
-    </ul>
-</nav>
-<div class="separator"></div>
-<main>
-    <h1>About project</h1>
-    <p>
-        Hi, my name is Bogdan, just i tell you about the project.
-        It's project for store audio, especially podcast.
-        In future we'll support other media type. The web version is only for upload
-        file. Main application will be in iphone, he'll support background play (screen off)
-        a podcast during you prepare to sleep, do housework, sit in a bus or something another.
-        Main goal of the application is download audio to external storage from remote server
-        and play media files in offline mode. After achieve a main goal, we'll add a new additional features
-        like a chat in real time, mini games, expand existing functional. You'll see a development process bellow in table view.
-        You can contact me in facebook. Click to the link, especially if you are a android developer.
-        We'll create a nice application for both major platforms. Good luck.
-    </p>
+    <nav>
+        {{template "navigation.gohtml" 2}}
+    </nav>
     <div class="separator"></div>
-    <h1>Web development process</h1>
+    <main>
+        <h1>About project</h1>
+        <p>
+            Hi, my name is Bogdan, just i tell you about the project.
+            It's project for store audio, especially podcast.
+            In future we'll support other media type. The web version is only for upload
+            file. Main application will be in iphone, he'll support background play (screen off)
+            a podcast during you prepare to sleep, do housework, sit in a bus or something another.
+            Main goal of the application is download audio to external storage from remote server
+            and play media files in offline mode. After achieve a main goal, we'll add a new additional features
+            like a chat in real time, mini games, expand existing functional. You'll see a development process bellow in table view.
+            You can contact me in facebook. Click to the link, especially if you are a android developer.
+            We'll create a nice application for both major platforms. Good luck.
+        </p>
+        <div class="separator"></div>
+        <h1>Web development process</h1>
+        <div class="separator"></div>
+        <ul class ="listGroup" >
+            <li>20.04.2021 Add viper library in project</li>
+            <li>23.04.2021 Add gorilla mux library in project</li>
+            <li>23.04.2021 Separate API and WEB server</li>
+        </ul>
+        <div class="separator"></div>
+        <h1>iOS development process</h1>
+        <div class="separator"></div>
+        <p>Not started yet.</p>
+    </main>
     <div class="separator"></div>
-    <ul class ="listGroup" >
-        <li>20.04.2021 Add viper library in project</li>
-        <li>23.04.2021 Add gorilla mux library in project</li>
-        <li>23.04.2021 Separate API and WEB server</li>
-    </ul>
-    <div class="separator"></div>
-    <h1>iOS development process</h1>
-    <div class="separator"></div>
-    <p>Not started yet.</p>
-</main>
-<div class="separator"></div>
-<footer>
-    <h1>© All rights reserved 2021 </h1>
-</footer>
+    {{template "footer.gohtml"}}
 </body>
 </html>

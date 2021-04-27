@@ -2,14 +2,17 @@ package routing
 
 import (
 	"IosifSuzuki/sharingToMe/internal/configuration"
+	"IosifSuzuki/sharingToMe/internal/defaults"
 	"IosifSuzuki/sharingToMe/internal/midlleware"
 	"IosifSuzuki/sharingToMe/pkg/loger"
 	"fmt"
 	"github.com/gorilla/mux"
+	template2 "html/template"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type Routing interface {
@@ -37,6 +40,8 @@ func NewWEBRouter() *WEBRouter {
 	}
 }
 
+var globalTemplate *template2.Template
+
 func (r *APIRouter)Setup() {
 	r.router.HandleFunc("/", indexGetHandler).Methods("GET")
 }
@@ -57,6 +62,12 @@ func (r *WEBRouter)Setup() {
 
 	r.router.PathPrefix("/static/").
 		Handler(http.StripPrefix("/static/", midlleware.LoggerMiddleware(fs)))
+	globalTemplate, err = template2.New("sharingToMe").Funcs(template2.FuncMap{
+		"now": time.Now,
+	}).ParseGlob(filepath.Join(baseDir, defaults.BasePathToTemplates))
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (r *APIRouter)Run() {
@@ -77,12 +88,12 @@ func (r *WEBRouter)Run() {
 	host, port := configuration.Configuration.WebServer.Host, configuration.Configuration.WebServer.Port
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", host, port))
 	if err != nil {
-		loger.PrintError(err)
+		panic(err)
 	} else {
 		loger.PrintInfo("Successfully started the WEB server on the port %s:%d", host, port)
 	}
 	if err := http.Serve(listener, r.router); err != nil {
-		loger.PrintError(err)
+		panic(err)
 	}
 
 }

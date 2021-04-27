@@ -12,7 +12,6 @@ CREATE TABLE publisher (
     id SERIAL PRIMARY KEY,
     nickname CHAR(32) NOT NULL,
     email text,
-    registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     ip INET NOT NULL,
     country_flag_url TEXT NOT NULL,
     latitude real NOT NULL,
@@ -23,7 +22,8 @@ CREATE TABLE post (
     id SERIAL PRIMARY KEY,
     publisher_id INT NOT NULL,
     description TEXT,
-    file_path TEXT NOT NULL 
+    file_path TEXT NOT NULL,
+    registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 );
 
 CREATE INDEX post_id_index ON post(post_id);

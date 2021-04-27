@@ -1,7 +1,7 @@
 package fileManager
 
 import (
-	"crypto/md5"
+	"IosifSuzuki/sharingToMe/internal/utility"
 	"crypto/rand"
 	"fmt"
 	"io"
@@ -25,7 +25,7 @@ func SaveMediaFile(file multipart.File, extension string) (*string, error) {
 	var byte = make([]byte, 8)
 	rand.Read(byte)
 	var (
-		fileName = fmt.Sprintf("%X", md5.New().Sum(byte))
+		_, fileName = utility.NewUUID()
 		fullPath = filepath.Join(BaseDir, "src", "assets", "files", fmt.Sprintf("%s%s", fileName, extension))
 	)
 	destinationFile, err := os.Create(fullPath)

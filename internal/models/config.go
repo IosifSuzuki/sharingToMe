@@ -10,16 +10,16 @@ type Server struct {
 }
 
 type DB struct {
-	Host string
-	Port int
-	Username string
-	Password string
-	DBName string
+	Host 		string
+	Port 		int
+	Username 	string
+	Password 	string
+	DBName 		string
 }
 
 type ConfigurationFile struct {
-	WebServer Server
-	ApiServer Server
-	MainDB DB
-	AppInfo App
+	WebServer 	Server
+	ApiServer 	Server
+	MainDB 		DB
+	AppInfo 	App
 }

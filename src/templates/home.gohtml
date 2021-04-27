@@ -6,13 +6,7 @@
     <link rel="stylesheet" href="/static/main.css">
 </head>
     <body>
-        <nav>
-            <ul>
-                <li><a class="active" href="/home">Home</a></li>
-                <li><a href="/sources">List of sources</a></li>
-                <li><a href="/development">Development</a></li>
-            </ul>
-        </nav>
+        {{template "navigation.gohtml" 0}}
         <div class="separator"></div>
         <main>
             <form action="/home" method="POST" enctype="multipart/form-data">
@@ -44,8 +38,6 @@
             </form>
         </main>
         <div class="separator"></div>
-        <footer>
-            <h1>© All rights reserved 2021 </h1>
-        </footer>
+        {{template "footer.gohtml"}}
     </body>
 </html>

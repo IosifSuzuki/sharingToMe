@@ -8,19 +8,13 @@ import (
 	"IosifSuzuki/sharingToMe/internal/utility"
 	"IosifSuzuki/sharingToMe/pkg/loger"
 	"encoding/json"
-	template2 "html/template"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 )
 
 const (
 	contentType = "Content-Type"
-)
-
-var (
-	basePathToTemplates = filepath.Join("src", "templates")
 )
 
 // API Handlers
@@ -42,15 +36,8 @@ func indexGetHandler(w http.ResponseWriter, _ *http.Request) {
 // WEB
 
 func homeGetHandler(w http.ResponseWriter, r *http.Request) {
-	baseDir, err := os.Getwd()
-	if err != nil {
-		loger.PrintError(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
-	tmpl := template2.Must(template2.ParseFiles(filepath.Join(baseDir, basePathToTemplates, "home.html")))
-	err = tmpl.Execute(w, nil)
+	err := globalTemplate.ExecuteTemplate(w, "home.gohtml", nil)
 	if err != nil {
 		loger.PrintError(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -77,18 +64,16 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 		descriptionValue = r.FormValue(descriptionKey)
 	)
 	file, fileHandler, err := r.FormFile(fileKey)
+	defer file.Close()
 	if len(nicknameValue) == 0 || fileHandler == nil || err != nil {
 		http.Redirect(w, r, "/home", http.StatusSeeOther)
 		return
 	}
 	var fileExtension = filepath.Ext(fileHandler.Filename)
-	if err != nil {
-		loger.PrintError(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	if len(fileExtension) == 0 {
+		fileExtension = ".mp3"
 	}
-	defer file.Close()
-	filepath, err := fileManager.SaveMediaFile(file, fileExtension)
+	newFilepath, err := fileManager.SaveMediaFile(file, fileExtension)
 	if err != nil {
 		loger.PrintError(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -103,7 +88,6 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 		Id: defaults.NewId,
 		Nickname: nicknameValue,
 		Email: emailValue,
-		RegisteredAt: nil,
 		Ip: publisherId,
 		Flag: flagURL,
 		Latitude: 48.62828063964844,
@@ -112,7 +96,7 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 	var post = models.Post{
 		Id: defaults.NewId,
 		Description: descriptionValue,
-		FilePath: *filepath,
+		FilePath: *newFilepath,
 		Publisher: &publisher,
 	}
 	if err := dbManager.WritePostToDB(post); err != nil {
@@ -125,21 +109,13 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func listOfSourcesGetHandler(w http.ResponseWriter, r *http.Request) {
-	baseDir, err := os.Getwd()
-	if err != nil {
-		loger.PrintError(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	tmpl := template2.Must(template2.ParseFiles(filepath.Join(baseDir, basePathToTemplates, "listOfSources.html")))
 	posts, err := dbManager.ReadPosts()
 	if err != nil {
 		loger.PrintError(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	err = tmpl.Execute(w, struct {
+	err = globalTemplate.ExecuteTemplate(w, "listOfSources.gohtml", struct{
 		Title string
 		Posts []models.Post
 	} {
@@ -154,15 +130,7 @@ func listOfSourcesGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func developmentGetHandler(w http.ResponseWriter, r *http.Request) {
-	baseDir, err := os.Getwd()
-	if err != nil {
-		loger.PrintError(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	tmpl := template2.Must(template2.ParseFiles(filepath.Join(baseDir, basePathToTemplates, "development.html")))
-	err = tmpl.Execute(w, nil)
+	var err = globalTemplate.ExecuteTemplate(w, "development.gohtml", nil)
 	if err != nil {
 		loger.PrintError(err)
 		w.WriteHeader(http.StatusInternalServerError)
