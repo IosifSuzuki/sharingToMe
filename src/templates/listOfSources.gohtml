@@ -27,16 +27,16 @@
                         <th>Date published</th>
                         <th>Play</th>
                     </tr>
-                    {{range .Posts}}
+                    {{range $index, $post := .Posts}}
                     <tr>
-                        <td>{{.Id}}</td>
-                        <td><img height="10px" width="15px" src="{{.Publisher.Flag.String}}" alt="flag of the country"></td>
-                        <td>{{.Publisher.Nickname}}</td>
-                        <td>{{.Description}}</td>
-                        <td>{{.Publisher.PrettyDate}}
+                        <td>{{$index}}</td>
+                        <td><img height="10px" width="15px" src="{{$post.Publisher.Flag.String}}" alt="flag of the country"></td>
+                        <td>{{$post.Publisher.Nickname}}</td>
+                        <td>{{$post.Description}}</td>
+                        <td>{{$post.PrettyDate}}
                         <td>
                             <audio controls>
-                                <source src={{.RemoteURL}} type="audio/mpeg">
+                                <source src={{$post.RemoteURL}} type="audio/mpeg">
                                 Your browser does not support the audio element.
                             </audio>
                         </td>
