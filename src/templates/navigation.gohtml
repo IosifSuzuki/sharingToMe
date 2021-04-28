@@ -3,5 +3,10 @@
         <li><a {{if eq . 0}}class="active"{{end}} href="/home">Home</a></li>
         <li><a {{if eq . 1}}class="active"{{end}} href="/sources">List of sources</a></li>
         <li><a {{if eq . 2}}class="active"{{end}} href="/development">Development</a></li>
+        <li style="float: right"><a id="time" href="">11:47</a></li>
     </ul>
+    <script src="/static/time.js"></script>
+    <script>
+        runTimer({{timeZoneOffset}})
+    </script>
 </nav>

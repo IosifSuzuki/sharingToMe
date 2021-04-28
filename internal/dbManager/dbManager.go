@@ -58,3 +58,15 @@ func ReadPosts() ([]models.Post, error) {
 	err = addPublisherToPost(posts)
 	return posts, err
 }
+
+func IsExistPublisher(publisher models.Publisher) (bool, error) {
+	stmt, err := DB.Prepare(`SELECT "id" FROM "publisher" WHERE "nickname" = $1 AND "ip" = $2`)
+	if err != nil {
+		return false, err
+	}
+	defer stmt.Close()
+	var publisherId = publisher.Id
+	row := stmt.QueryRow(publisher.Nickname, publisher.Ip)
+	_ = row.Scan(&publisherId)
+	return publisherId != defaults.NewId, err
+}

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home page</title>
+    <title>{{.Title}}</title>
     <link rel="stylesheet" href="/static/main.css">
 </head>
 <body>
@@ -25,13 +25,26 @@
             We'll create a nice application for both major platforms. Good luck.
         </p>
         <div class="separator"></div>
+        <p>You can don't see all changes, because it's not deployed in production.</p>
+        <div class="separator"></div>
         <h1>Web development process</h1>
         <div class="separator"></div>
-        <ul class ="listGroup" >
-            <li>20.04.2021 Add viper library in project</li>
-            <li>23.04.2021 Add gorilla mux library in project</li>
-            <li>23.04.2021 Separate API and WEB server</li>
-        </ul>
+        {{if not .CommitInfos }}
+            <p>Not started yet.</p>
+        {{ else }}
+            <ul class ="listGroup" >
+                {{range .CommitInfos}}
+                    <li>{{.PrettyDate}} | {{.Author}}:
+                        <div class="separator"></div>
+                        <ul>
+                            {{range .Messages}}
+                                <li>{{.}}</li>
+                            {{end}}
+                        </ul>
+                    </li>
+                {{end}}
+            </ul>
+        {{ end }}
         <div class="separator"></div>
         <h1>iOS development process</h1>
         <div class="separator"></div>

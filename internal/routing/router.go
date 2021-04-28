@@ -4,6 +4,7 @@ import (
 	"IosifSuzuki/sharingToMe/internal/configuration"
 	"IosifSuzuki/sharingToMe/internal/defaults"
 	"IosifSuzuki/sharingToMe/internal/midlleware"
+	"IosifSuzuki/sharingToMe/internal/utility"
 	"IosifSuzuki/sharingToMe/pkg/loger"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -57,13 +58,20 @@ func (r *WEBRouter)Setup() {
 		loger.PrintError(err)
 		return
 	}
-	dir := http.Dir(filepath.Join(baseDir, "src", "assets"))
-	fs := http.FileServer(dir)
+	staticDir := http.Dir(filepath.Join(baseDir, "src", "assets"))
+	staticFS := http.FileServer(staticDir)
 
 	r.router.PathPrefix("/static/").
-		Handler(http.StripPrefix("/static/", midlleware.LoggerMiddleware(fs)))
+		Handler(http.StripPrefix("/static/", midlleware.LoggerMiddleware(staticFS)))
+
+	filesDir := http.Dir(filepath.Join(baseDir, "src", "files"))
+	filesFS := http.FileServer(filesDir)
+	r.router.PathPrefix("/files/").
+		Handler(http.StripPrefix("/files/", midlleware.LoggerMiddleware(filesFS)))
+
 	globalTemplate, err = template2.New("sharingToMe").Funcs(template2.FuncMap{
 		"now": time.Now,
+		"timeZoneOffset": utility.GetTimeZoneOffsetFromGTW,
 	}).ParseGlob(filepath.Join(baseDir, defaults.BasePathToTemplates))
 	if err != nil {
 		panic(err)
@@ -76,6 +84,7 @@ func (r *APIRouter)Run() {
 	if err != nil {
 		loger.PrintError(err)
 	} else {
+		defer listener.Close()
 		loger.PrintInfo("Successfully started the API server on the port %s:%d", host, port)
 	}
 	if err := http.Serve(listener, r.router); err != nil {
@@ -90,6 +99,7 @@ func (r *WEBRouter)Run() {
 	if err != nil {
 		panic(err)
 	} else {
+		defer listener.Close()
 		loger.PrintInfo("Successfully started the WEB server on the port %s:%d", host, port)
 	}
 	if err := http.Serve(listener, r.router); err != nil {

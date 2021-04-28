@@ -25,6 +25,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
     line-height: 1;
+    margin-bottom: 50px;
 }
 ol, ul {
     list-style: none;
@@ -152,13 +153,28 @@ main {
 }
 
 footer {
-    background-color: #e2e2e2;
+    /*background-color: #e2e2e2;*/
+    background: linear-gradient(-45deg, #e2e2e2, #a5a5a5, #d9d9d9, #646464);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
     height: 50px;
     border: 1px solid #dddddd;
     position: fixed;
     bottom: 0;
     right: 0;
     left: 0;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 footer h1 {
@@ -228,19 +244,23 @@ main p {
     text-align: justify;
 }
 
-.listGroup li:first-child {
+.listGroup > li:first-child {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
 
-.listGroup li:last-child {
+.listGroup > li:last-child {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
 }
 
-.listGroup li {
+.listGroup > li {
     border: 1px solid #ddd;
     margin-top: -1px;
     background-color: #f6f6f6;
     padding: 8px;
+}
+
+audio {
+    height: 14px;
 }

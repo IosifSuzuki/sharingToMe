@@ -22,7 +22,7 @@ type Post struct {
 }
 
 func (p *Post)RemoteURL() string {
-	return fmt.Sprintf("/static/files/%s", filepath.Base(p.FilePath))
+	return fmt.Sprintf("/files/%s", filepath.Base(p.FilePath))
 }
 
 func (p *Post)PrettyDate() string {

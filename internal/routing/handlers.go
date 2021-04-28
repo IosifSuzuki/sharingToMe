@@ -4,6 +4,8 @@ import (
 	"IosifSuzuki/sharingToMe/internal/dbManager"
 	"IosifSuzuki/sharingToMe/internal/defaults"
 	"IosifSuzuki/sharingToMe/internal/fileManager"
+	"IosifSuzuki/sharingToMe/internal/gitHubManager"
+	"IosifSuzuki/sharingToMe/internal/ipManager"
 	"IosifSuzuki/sharingToMe/internal/models"
 	"IosifSuzuki/sharingToMe/internal/utility"
 	"IosifSuzuki/sharingToMe/pkg/loger"
@@ -36,8 +38,11 @@ func indexGetHandler(w http.ResponseWriter, _ *http.Request) {
 // WEB
 
 func homeGetHandler(w http.ResponseWriter, r *http.Request) {
-
-	err := globalTemplate.ExecuteTemplate(w, "home.gohtml", nil)
+	err := globalTemplate.ExecuteTemplate(w, "home.gohtml", struct {
+		Title string
+	}{
+		Title: "Home",
+	})
 	if err != nil {
 		loger.PrintError(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -64,11 +69,11 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 		descriptionValue = r.FormValue(descriptionKey)
 	)
 	file, fileHandler, err := r.FormFile(fileKey)
-	defer file.Close()
 	if len(nicknameValue) == 0 || fileHandler == nil || err != nil {
 		http.Redirect(w, r, "/home", http.StatusSeeOther)
 		return
 	}
+	defer file.Close()
 	var fileExtension = filepath.Ext(fileHandler.Filename)
 	if len(fileExtension) == 0 {
 		fileExtension = ".mp3"
@@ -79,7 +84,6 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var flagURL, _ = url.Parse("https://assets.ipstack.com/flags/ua.svg")
 	publisherId, err := utility.GetIP(r)
 	if err != nil {
 		publisherId = "0.0.0.0"
@@ -89,9 +93,24 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 		Nickname: nicknameValue,
 		Email: emailValue,
 		Ip: publisherId,
-		Flag: flagURL,
-		Latitude: 48.62828063964844,
-		Longitude: 22.514659881591797,
+	}
+	isExist, err := dbManager.IsExistPublisher(publisher)
+	if !isExist {
+		ipInfo, err := ipManager.GetIpInfo(publisherId)
+		if err != nil {
+			loger.PrintError(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		publisher.Latitude = ipInfo.Latitude
+		publisher.Longitude = ipInfo.Longitude
+		flagURL, err := url.Parse(ipInfo.CountryFlag)
+		if err != nil {
+			loger.PrintError(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		publisher.Flag = flagURL
 	}
 	var post = models.Post{
 		Id: defaults.NewId,
@@ -130,7 +149,20 @@ func listOfSourcesGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func developmentGetHandler(w http.ResponseWriter, r *http.Request) {
-	var err = globalTemplate.ExecuteTemplate(w, "development.gohtml", nil)
+	commitInfos,err := gitHubManager.FetchCommitInfos()
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err = globalTemplate.ExecuteTemplate(w, "development.gohtml", struct {
+		Title string
+		CommitInfos []models.CommitInfo
+	}{
+		Title: "Development",
+		CommitInfos: commitInfos,
+	})
 	if err != nil {
 		loger.PrintError(err)
 		w.WriteHeader(http.StatusInternalServerError)

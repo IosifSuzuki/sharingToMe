@@ -20,7 +20,7 @@ func setupConfiguration() *models.ConfigurationFile {
 		panic(err)
 	}
 
-	viper.AddConfigPath(filepath.Join(baseDir, "src", "configs"))
+	viper.AddConfigPath(filepath.Join(baseDir, "src", "config"))
 	viper.SetConfigName(nameOfConfigFile)
 	viper.SetConfigType(typeOfConfigurationFile)
 	viper.AutomaticEnv()

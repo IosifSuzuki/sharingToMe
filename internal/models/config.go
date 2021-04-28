@@ -1,7 +1,8 @@
 package models
 
 type App struct {
-	SecretKey string
+	SecretKey 			string
+	IpStackAccessKey 	string
 }
 
 type Server struct {
@@ -18,8 +19,8 @@ type DB struct {
 }
 
 type ConfigurationFile struct {
+	AppInfo 	App
 	WebServer 	Server
 	ApiServer 	Server
 	MainDB 		DB
-	AppInfo 	App
 }
