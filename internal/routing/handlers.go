@@ -7,6 +7,7 @@ import (
 	"IosifSuzuki/sharingToMe/internal/gitHubManager"
 	"IosifSuzuki/sharingToMe/internal/ipManager"
 	"IosifSuzuki/sharingToMe/internal/models"
+	"IosifSuzuki/sharingToMe/internal/sysInfoManager"
 	"IosifSuzuki/sharingToMe/internal/utility"
 	"IosifSuzuki/sharingToMe/pkg/loger"
 	"encoding/json"
@@ -162,6 +163,27 @@ func developmentGetHandler(w http.ResponseWriter, r *http.Request) {
 	}{
 		Title: "Development",
 		CommitInfos: commitInfos,
+	})
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func systemInfoGetHandler(w http.ResponseWriter, r *http.Request) {
+	var sysInfo, err = sysInfoManager.GetSysInfo()
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	err = globalTemplate.ExecuteTemplate(w, "sysInfo.gohtml", struct {
+		Title string
+		SysInfo models.SysInfo
+	}{
+		Title: "System Info",
+		SysInfo: *sysInfo,
 	})
 	if err != nil {
 		loger.PrintError(err)

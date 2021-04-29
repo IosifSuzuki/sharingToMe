@@ -52,3 +52,16 @@ func GetTimeZoneOffsetFromGTW() int {
 	_, offset :=  time.Now().Zone()
 	return offset / 3600
 }
+
+func NumberGroup(number, digit uint64) string {
+	var resultText string
+	for i := uint64(0); number / 10 != 0; i++ {
+		var appendText = ""
+		if i != 0 && i % digit == 0 {
+			appendText = " "
+		}
+		resultText = fmt.Sprintf("%d%s%s", number % 10, appendText, resultText)
+		number /= 10
+	}
+	return resultText
+}

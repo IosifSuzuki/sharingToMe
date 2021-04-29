@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    {{template "navigation.gohtml" 3}}
+    <div class="separator"></div>
+    <table class="list">
+        <tr>
+            <th>Info</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">Golang version: </td>
+            <td class="textAlignLeft">{{.SysInfo.GolangVersion}}</td>
+        </tr>
+        {{range $indexOfCPU, $CPUInfo := .SysInfo.CPUInfos}}
+            <tr>
+                <td class="textAlignLeft">CPU №{{$indexOfCPU}} Vendor: </td>
+                <td class="textAlignLeft">{{$CPUInfo.Vendor}}</td>
+            </tr>
+            <tr>
+                <td class="textAlignLeft">CPU №{{$indexOfCPU}} Family: </td>
+                <td class="textAlignLeft">{{$CPUInfo.Family}}</td>
+            </tr>
+            <tr>
+                <td class="textAlignLeft">CPU №{{$indexOfCPU}} Number of cores: </td>
+                <td class="textAlignLeft">{{$CPUInfo.NumberOfCores}}</td>
+            </tr>
+            <tr>
+                <td class="textAlignLeft">CPU №{{$indexOfCPU}} Model Name: </td>
+                <td class="textAlignLeft">{{$CPUInfo.ModelName}}</td>
+            </tr>
+            <tr>
+                <td class="textAlignLeft">CPU №{{$indexOfCPU}} Speed: </td>
+                <td class="textAlignLeft">{{$CPUInfo.Speed}}MHz</td>
+            </tr>
+            <tr>
+                <td class="textAlignLeft">CPU №{{$indexOfCPU}} Cashe Size: </td>
+                <td class="textAlignLeft">{{$CPUInfo.CasheSize}} bytes</td>
+            </tr>
+            {{range $indexOfUtilizationPerCore, $utilizationPerCore := $CPUInfo.UtilizationPerCore }}
+                <tr>
+                    <td class="textAlignLeft">CPU №{{$indexOfCPU}} Current CPU <{{$indexOfUtilizationPerCore}}> Core utilization: </td>
+                    <td class="textAlignLeft">{{n2 $utilizationPerCore}}%</td>
+                </tr>
+            {{end}}
+        {{end}}
+        <tr>
+            <td class="textAlignLeft">Up Time: </td>
+            <td class="textAlignLeft">{{.SysInfo.UpTime}} </td>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">Number of processes running: </td>
+            <td class="textAlignLeft">{{.SysInfo.NumberOfRunningProcesses}} </td>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">OS: </td>
+            <td class="textAlignLeft">{{.SysInfo.OS}} </td>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">Total disk space: </td>
+            <td class="textAlignLeft">{{ng .SysInfo.StorageInfo.TotalDiskSpace 3}} bytes</td>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">Used disk space: </td>
+            <td class="textAlignLeft">{{ng .SysInfo.StorageInfo.UsedDiskSpace 3}} bytes</td>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">Free disk space: </td>
+            <td class="textAlignLeft">{{ng .SysInfo.StorageInfo.FreeDiskSpace 3}} bytes </td>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">Percentage disk space usage: </td>
+            <td class="textAlignLeft">{{n2 .SysInfo.StorageInfo.PercentageSpaceUsage}}% </td>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">Total RAM memory: </td>
+            <td class="textAlignLeft">{{ng .SysInfo.RAMInfo.TotalMemory 3}} bytes </td>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">Free RAM memory: </td>
+            <td class="textAlignLeft">{{ng .SysInfo.RAMInfo.FreeMemory 3}} bytes </td>
+        </tr>
+        <tr>
+            <td class="textAlignLeft">Percentage used RAM memory: </td>
+            <td class="textAlignLeft">{{n2 .SysInfo.RAMInfo.PercentageUsedMemory}}% </td>
+        </tr>
+    </table>
+    <div class="separator"></div>
+    {{template "footer.gohtml"}}
+</body>
+</html>

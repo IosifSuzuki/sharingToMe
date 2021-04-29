@@ -53,6 +53,8 @@ func (r *WEBRouter)Setup() {
 	r.router.Handle("/home", midlleware.LoggerMiddleware(http.HandlerFunc(homePostHandler))).Methods("POST")
 	r.router.Handle("/sources", midlleware.LoggerMiddleware(http.HandlerFunc(listOfSourcesGetHandler))).Methods("GET")
 	r.router.Handle("/development", midlleware.LoggerMiddleware(http.HandlerFunc(developmentGetHandler))).Methods("GET")
+	r.router.Handle("/sysInfo", midlleware.LoggerMiddleware(http.HandlerFunc(systemInfoGetHandler))).Methods("GET")
+
 	baseDir, err := os.Getwd()
 	if err != nil {
 		loger.PrintError(err)
@@ -72,6 +74,10 @@ func (r *WEBRouter)Setup() {
 	globalTemplate, err = template2.New("sharingToMe").Funcs(template2.FuncMap{
 		"now": time.Now,
 		"timeZoneOffset": utility.GetTimeZoneOffsetFromGTW,
+		"n2": func(number float64) string {
+			return fmt.Sprintf("%.2f", number)
+		},
+		"ng": utility.NumberGroup,
 	}).ParseGlob(filepath.Join(baseDir, defaults.BasePathToTemplates))
 	if err != nil {
 		panic(err)

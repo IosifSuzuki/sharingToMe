@@ -1,8 +1,9 @@
 "use strict";
 
 function runTimer(timeZoneOffset) {
-    setTimeout(() => {
+    setTimeout(function timer() {
         updateTime(timeZoneOffset)
+        setTimeout(timer, 1000)
     }, 1000)
     updateTime(timeZoneOffset)
 }

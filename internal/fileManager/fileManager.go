@@ -23,7 +23,7 @@ func getBaseDir() string {
 func SaveMediaFile(file multipart.File, extension string) (*string, error) {
 	var (
 		fileName, _ = utility.NewUUID()
-		fullPath = filepath.Join(BaseDir, "src", "assets", "files", fmt.Sprintf("%s%s", fileName, extension))
+		fullPath = filepath.Join(BaseDir, "src", "files", fmt.Sprintf("%s%s", fileName, extension))
 	)
 	destinationFile, err := os.Create(fullPath)
 	defer destinationFile.Close()

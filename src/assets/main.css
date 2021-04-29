@@ -74,6 +74,21 @@ nav ul li a {
     text-decoration: none;
 }
 
+nav ul li:last-child {
+    height: 50px;
+    float: right;
+}
+
+nav ul li:last-child a {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+nav ul li:last-child a:hover {
+    background-color: inherit;
+    color: inherit;
+}
+
 nav ul li a:hover {
     color: white;
     background-color: #ddd;
@@ -222,6 +237,10 @@ footer h1 {
     width: 100px;
 }
 
+.textAlignLeft {
+    text-align: left !important;
+}
+
 .list td {
     text-align: center;
 }
@@ -263,4 +282,9 @@ main p {
 
 audio {
     height: 14px;
+}
+
+.pinBottomTimeLabel {
+    text-align: center;
+    font-size: 12px;
 }
