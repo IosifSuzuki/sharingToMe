@@ -36,7 +36,7 @@ func getAllPosts() ([]models.Post, error) {
 	return posts, nil
 }
 
-func addPublisherToPost(posts []models.Post ) error {
+func addPublisherToPost(posts []models.Post) error {
 	stmtOfPublisher, err := DB.Prepare(`SELECT * FROM "publisher" WHERE "id" = $1`)
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func addPublisherToPost(posts []models.Post ) error {
 	defer stmtOfPublisher.Close()
 	for i := range posts {
 		var (
-			row = stmtOfPublisher.QueryRow(posts[i].Publisher.Id)
+			row     = stmtOfPublisher.QueryRow(posts[i].Publisher.Id)
 			flagURL string
 		)
 		err = row.Scan(
@@ -80,7 +80,7 @@ func insertPublisher(publisher *models.Publisher) error {
 		publisher.Flag.String(),
 		publisher.Latitude,
 		publisher.Longitude,
-		).Scan(&id)
+	).Scan(&id)
 	if err != nil {
 		return err
 	}

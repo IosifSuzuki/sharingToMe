@@ -36,3 +36,8 @@ func SaveMediaFile(file multipart.File, extension string) (*string, error) {
 
 	return &fullPath, nil
 }
+
+func RemoveFile(filePath string) error {
+	var err = os.Remove(filePath)
+	return err
+}

@@ -9,15 +9,37 @@
         {{template "navigation.gohtml" 0}}
         <div class="separator"></div>
         <main>
+            <h1>Notification: Sent data will be automatically deleted after a certain period</h1>
+            {{with .Errors.AccessRefused}}
+                <ul class="errorList">
+                    {{range .}}
+                        <li>{{.}}</li>
+                    {{end}}
+                </ul>
+            {{end}}
             <form action="/home" method="POST" enctype="multipart/form-data">
                 <ul class="mainForm">
                     <li>
                         <label>Display name <span class="required">*</span>
+                            {{with .Errors.Nickname}}
+                                <ul class="errorList">
+                                    {{range .}}
+                                        <li>{{.}}</li>
+                                    {{end}}
+                                </ul>
+                            {{end}}
                             <input type="text" name="nickname" class="field" placeholder="Your display name" />
                         </label>
                     </li>
                     <li>
                         <label>Email
+                            {{with .Errors.Email}}
+                                <ul class="errorList">
+                                    {{range .}}
+                                        <li>{{.}}</li>
+                                    {{end}}
+                                </ul>
+                            {{end}}
                             <input type="text" name="email" class="field" placeholder="Your email" />
                         </label>
                     </li>
@@ -28,6 +50,13 @@
                     </li>
                     <li>
                         <label>Choose mp3 file to upload <span class="required">*</span>
+                            {{with .Errors.File}}
+                                <ul class="errorList">
+                                    {{range .}}
+                                        <li>{{.}}</li>
+                                    {{end}}
+                                </ul>
+                            {{end}}
                             <input type="file" name = "file" class="field" accept=".mp3">
                         </label>
                     </li>

@@ -10,7 +10,7 @@
         <div class="separator"></div>
         <div>
             {{if not .Posts}}
-                <p>Not started yet.</p>
+                <p>Data of source is empty.</p>
             {{else}}
                 <table class="list">
                     <tr>
@@ -23,7 +23,7 @@
                     </tr>
                     {{range $index, $post := .Posts}}
                     <tr>
-                        <td>{{$index}}</td>
+                        <td>{{add $index 1}}</td>
                         <td><img height="10px" width="15px" src="{{$post.Publisher.Flag.String}}" alt="flag of the country"></td>
                         <td>{{$post.Publisher.Nickname}}</td>
                         <td>{{$post.Description}}</td>

@@ -23,9 +23,9 @@ CREATE TABLE post (
     publisher_id INT NOT NULL,
     description TEXT,
     file_path TEXT NOT NULL,
-    registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    registered_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX post_id_index ON post(post_id);
-
+ALTER TABLE post ADD FOREIGN KEY (publisher_id) REFERENCES publisher(id) ON DELETE CASCADE;
 ```

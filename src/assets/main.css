@@ -263,6 +263,12 @@ main p {
     text-align: justify;
 }
 
+.listGroup {
+    padding: 4px;
+    overflow-y: scroll;
+    max-height: 400px;
+}
+
 .listGroup > li:first-child {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -287,4 +293,13 @@ audio {
 .pinBottomTimeLabel {
     text-align: center;
     font-size: 12px;
+}
+
+.errorList > li {
+    font-family: Helvetica Neue,Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 12px;
+    margin: 4px 0;
+    display: block;
+    color: red;
 }

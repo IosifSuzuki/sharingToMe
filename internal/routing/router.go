@@ -54,7 +54,7 @@ func (r *WEBRouter)Setup() {
 	r.router.Handle("/sources", midlleware.LoggerMiddleware(http.HandlerFunc(listOfSourcesGetHandler))).Methods("GET")
 	r.router.Handle("/development", midlleware.LoggerMiddleware(http.HandlerFunc(developmentGetHandler))).Methods("GET")
 	r.router.Handle("/sysInfo", midlleware.LoggerMiddleware(http.HandlerFunc(systemInfoGetHandler))).Methods("GET")
-
+	r.router.Handle("/clearData", midlleware.LoggerMiddleware(http.HandlerFunc(clearDataGetHandler))).Methods("GET")
 	baseDir, err := os.Getwd()
 	if err != nil {
 		loger.PrintError(err)
@@ -78,6 +78,9 @@ func (r *WEBRouter)Setup() {
 			return fmt.Sprintf("%.2f", number)
 		},
 		"ng": utility.NumberGroup,
+		"add": func(a, b int) int {
+			return a + b
+		},
 	}).ParseGlob(filepath.Join(baseDir, defaults.BasePathToTemplates))
 	if err != nil {
 		panic(err)
