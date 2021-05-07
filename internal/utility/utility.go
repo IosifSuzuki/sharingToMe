@@ -3,6 +3,7 @@ package utility
 import (
 	"crypto/rand"
 	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"io"
 	"net"
 	"net/http"
@@ -64,4 +65,14 @@ func NumberGroup(number, digit uint64) string {
 		number /= 10
 	}
 	return resultText
+}
+
+func CreateHashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
+
+func CompareHashPassword(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

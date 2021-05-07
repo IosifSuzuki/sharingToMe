@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"IosifSuzuki/sharingToMe/internal/JWT"
 	"IosifSuzuki/sharingToMe/internal/dbManager"
 	"IosifSuzuki/sharingToMe/internal/defaults"
 	"IosifSuzuki/sharingToMe/internal/fileManager"
@@ -12,28 +13,205 @@ import (
 	"IosifSuzuki/sharingToMe/pkg/loger"
 	"encoding/json"
 	"net/http"
-	"net/url"
 	"path/filepath"
 )
 
-const (
-	contentType = "Content-Type"
-)
 
 // API Handlers
 
-func indexGetHandler(w http.ResponseWriter, _ *http.Request) {
+func welcomeGetHandler(w http.ResponseWriter, _ *http.Request) {
 	var notification = models.Notification{
 		Title:       "Welcome to us",
 		Description: "This service provide send & store date to server",
+		Error: models.Error{
+			Message: defaults.RequestCompletedSuccessfully,
+			Code:    http.StatusOK,
+		},
 	}
-	w.Header().Set(contentType, "application/json")
+	w.Header().Set(defaults.ContentType, "application/json")
 	err := json.NewEncoder(w).Encode(notification)
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(struct {
+			Error models.Error `json:"error"`
+		}{
+			Error: models.Error{
+				Message: err.Error(),
+				Code:    http.StatusBadRequest,
+			},
+		})
+		return
+	}
+}
+
+func signInConsumerPostHandler(w http.ResponseWriter, r *http.Request) {
+	var (
+		credential models.Credential
+		err        = json.NewDecoder(r.Body).Decode(&credential)
+	)
+	w.Header().Set(defaults.ContentType, "application/json")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	consumer, err := dbManager.FetchConsumer(credential)
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(struct {
+			Error models.Error `json:"error"`
+		}{
+			Error: models.Error{
+				Message: err.Error(),
+				Code:    http.StatusBadRequest,
+			},
+		})
+		return
+	}
+	token, err := JWT.GenerateToken(*consumer)
 	if err != nil {
 		loger.PrintError(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	err = json.NewEncoder(w).Encode(struct {
+		Token string       `json:"token"`
+		Error models.Error `json:"error"`
+	}{
+		Token: token,
+		Error: models.Error{
+			Message: defaults.RequestCompletedSuccessfully,
+			Code:    http.StatusBadRequest,
+		},
+	})
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func signUpConsumerPostHandler(w http.ResponseWriter, r *http.Request) {
+	var (
+		consumer models.Consumer
+		err      = json.NewDecoder(r.Body).Decode(&consumer)
+	)
+	w.Header().Set(defaults.ContentType, "application/json")
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(struct {
+			Error models.Error `json:"error"`
+		}{
+			Error: models.Error{
+				Message: err.Error(),
+				Code:    http.StatusBadRequest,
+			},
+		})
+		return
+	}
+	consumer.Id = defaults.NewId
+	ok, errorMessage := consumer.ValidateForm()
+	if !ok {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusForbidden)
+		_ = json.NewEncoder(w).Encode(struct {
+			Error models.Error `json:"error"`
+		}{
+			Error: models.Error{
+				Message: errorMessage,
+				Code:    http.StatusForbidden,
+			},
+		})
+		return
+	} else {
+		consumer.Password, err = utility.CreateHashPassword(consumer.Password)
+		if err != nil {
+			loger.PrintError(err)
+			w.WriteHeader(http.StatusForbidden)
+			_ = json.NewEncoder(w).Encode(struct {
+				Error models.Error `json:"error"`
+			}{
+				Error: models.Error{
+					Message: err.Error(),
+					Code:    http.StatusForbidden,
+				},
+			})
+		}
+	}
+	ip, err := utility.GetIP(r)
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(struct {
+			Error models.Error `json:"error"`
+		}{
+			Error: models.Error{
+				Message: err.Error(),
+				Code:    http.StatusBadRequest,
+			},
+		})
+		return
+	}
+	isExist, err := dbManager.IsExistConsumer(consumer)
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if isExist {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusConflict)
+		_ = json.NewEncoder(w).Encode(struct {
+			Error models.Error `json:"error"`
+		}{
+			Error: models.Error{
+				Message: defaults.ConsumerAlreadyExist,
+				Code:    http.StatusConflict,
+			},
+		})
+		return
+	}
+	ipInfo, err := ipManager.GetIpInfo(ip)
+	if ipInfo != nil {
+		consumer.IpInfo = *ipInfo
+	}
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(struct {
+			Error models.Error `json:"error"`
+		}{
+			Error: models.Error{
+				Message: err.Error(),
+				Code:    http.StatusInternalServerError,
+			},
+		})
+		return
+	}
+	err = dbManager.SaveConsumer(consumer)
+	if err != nil {
+		loger.PrintError(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(struct {
+			Error models.Error `json:"error"`
+		}{
+			Error: models.Error{
+				Message: err.Error(),
+				Code:    http.StatusInternalServerError,
+			},
+		})
+		return
+	}
+	err = json.NewEncoder(w).Encode(struct {
+		Error models.Error `json:"error"`
+	}{
+		Error: models.Error{
+			Message: defaults.RequestCompletedSuccessfully,
+			Code:    http.StatusOK,
+		},
+	})
 }
 
 // WEB
@@ -96,7 +274,7 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if !isAllow {
 		errors["AccessRefused"] = make([]string, 0)
-		errors["AccessRefused"] = append(errors["AccessRefused"],"File upload limit exceeded")
+		errors["AccessRefused"] = append(errors["AccessRefused"], "File upload limit exceeded")
 	}
 	if len(errors) > 0 {
 		err := globalTemplate.ExecuteTemplate(w, "home.gohtml", struct {
@@ -132,7 +310,6 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 		Id:       defaults.NewId,
 		Nickname: nicknameValue,
 		Email:    emailValue,
-		Ip:       publisherId,
 	}
 	isExist, err := dbManager.IsExistPublisher(publisher)
 	if !isExist {
@@ -142,15 +319,9 @@ func homePostHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		publisher.Latitude = ipInfo.Latitude
-		publisher.Longitude = ipInfo.Longitude
-		flagURL, err := url.Parse(ipInfo.CountryFlag)
-		if err != nil {
-			loger.PrintError(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
+		if ipInfo != nil {
+			publisher.IpInfo = *ipInfo
 		}
-		publisher.Flag = flagURL
 	}
 	var post = models.Post{
 		Id:          defaults.NewId,

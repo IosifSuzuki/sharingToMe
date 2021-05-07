@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	_ "github.com/lib/pq"
-	"time"
 )
 
 var DB = makeConnectionToDB()
@@ -62,59 +61,26 @@ func ReadPosts() ([]models.Post, error) {
 }
 
 func IsExistPublisher(publisher models.Publisher) (bool, error) {
-	stmt, err := DB.Prepare(`SELECT "id" FROM "publisher" WHERE "nickname" = $1 AND "ip" = $2`)
-	if err != nil {
-		return false, err
-	}
-	defer stmt.Close()
-	var publisherId = publisher.Id
-	row := stmt.QueryRow(publisher.Nickname, publisher.Ip)
-	_ = row.Scan(&publisherId)
-	return publisherId != defaults.NewId, err
+	return isExistPublisher(publisher)
 }
 
 func ClearOldData() ([]string, error) {
-	var (
-		dateForDeletePost = time.Now().Add(- 3 * 24 * time.Hour)
-		files = make([]string, 0, 0)
-	)
-	stmt, err := DB.Prepare(`DELETE FROM "post" WHERE "created_at" < $1 RETURNING "file_path"`)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
-	rows, err := stmt.Query(dateForDeletePost)
-	if err != nil {
-		return nil, err
-	}
-	for rows.Next() {
-		var filePath string
-		err = rows.Scan(&filePath)
-		if err != nil {
-			return files, err
-		}
-		files = append(files, filePath)
-	}
-	return files, nil
+	return clearOldData()
 }
 
 func AllowCreatePost(ip string) (bool, error) {
-	var (
-		year, month, day = time.Now().Date()
-		todayBeginDay = time.Date(year, month, day, 0, 0, 0, 0, time.Now().Location())
-	)
-	stmt, err := DB.Prepare(`SELECT COUNT(*) FROM 
-    "post" INNER JOIN "publisher" ON post.publisher_id = publisher.id
-	WHERE "created_at" > $1 AND "ip" = $2`)
-	if err != nil {
-		return false, nil
-	}
-	defer stmt.Close()
-	var row = stmt.QueryRow(todayBeginDay, ip)
-	var countOfPost int
-	err = row.Scan(&countOfPost)
-	if err != nil {
-		return false, nil
-	}
-	return countOfPost < 3, nil
+	return allowCreatePost(ip)
 }
+
+func IsExistConsumer(consumer models.Consumer) (bool, error) {
+	return isExistConsumer(consumer)
+}
+
+func SaveConsumer(consumer models.Consumer) error {
+	return saveConsumer(consumer)
+}
+
+func FetchConsumer(credential models.Credential) (*models.Consumer, error) {
+	return fetchConsumer(credential)
+}
+

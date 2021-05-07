@@ -18,6 +18,19 @@ CREATE TABLE publisher (
     longitude real NOT NULL
 );
 
+CREATE TABLE consumer (
+    id SERIAL PRIMARY KEY,
+    nickname CHAR(32) NOT NULL,
+    phone_number CHAR(17) NOT NULL,
+    password_hash TEXT NOT NULL,
+    birth_date TIMESTAMP NOT NULL,
+    reference TEXT,
+    ip INET NOT NULL,
+    country_flag_url TEXT NOT NULL,
+    latitude real NOT NULL,
+    longitude real NOT NULL
+);
+
 CREATE TABLE post (
     id SERIAL PRIMARY KEY,
     publisher_id INT NOT NULL,

@@ -3,16 +3,17 @@ package models
 import "encoding/json"
 
 type IpInfo struct {
-	Longitude float32
-	Latitude float32
-	CountryFlag string
+	IP 			string 	`json:"ip"`
+	Longitude   float32 `json:"longitude"`
+	Latitude    float32	`json:"latitude"`
+	CountryFlag string	`json:"countryFlag"`
 }
 
-func (i *IpInfo)UnmarshalJSON(data []byte) error {
-	var ipInfo struct{
+func (i *IpInfo) UnmarshalJSON(data []byte) error {
+	var ipInfo struct {
 		Longitude float32 `json:"longitude"`
-		Latitude float32 `json:"latitude"`
-		Location struct{
+		Latitude  float32 `json:"latitude"`
+		Location  struct {
 			CountryFlag string `json:"country_flag"`
 		}
 	}

@@ -44,7 +44,9 @@ func NewWEBRouter() *WEBRouter {
 var globalTemplate *template2.Template
 
 func (r *APIRouter)Setup() {
-	r.router.HandleFunc("/", indexGetHandler).Methods("GET")
+	r.router.Handle("/api/welcome", midlleware.AuthorizationMiddleware(midlleware.LoggerMiddleware(http.HandlerFunc(welcomeGetHandler)))).Methods("GET")
+	r.router.Handle("/api/signIn", midlleware.LoggerMiddleware(http.HandlerFunc(signInConsumerPostHandler))).Methods("POST")
+	r.router.Handle("/api/signUp", midlleware.LoggerMiddleware(http.HandlerFunc(signUpConsumerPostHandler))).Methods("POST")
 }
 
 func (r *WEBRouter)Setup() {

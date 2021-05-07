@@ -47,5 +47,6 @@ func GetIpInfo(ip string) (*models.IpInfo, error) {
 	}
 	var ipInfo *models.IpInfo
 	err = json.Unmarshal(bodyData, &ipInfo)
+	ipInfo.IP = ip
 	return ipInfo, err
 }
