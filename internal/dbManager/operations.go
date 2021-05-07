@@ -54,7 +54,7 @@ func addPublisherToPost(posts []models.Post) error {
 			&posts[i].Publisher.Id,
 			&posts[i].Publisher.Nickname,
 			&posts[i].Publisher.IpInfo.IP,
-			&posts[i].Publisher.IpInfo.IP,
+			&posts[i].Publisher.IpInfo.CountryFlag,
 			&posts[i].Publisher.IpInfo.Latitude,
 			&posts[i].Publisher.IpInfo.Longitude,
 			&posts[i].Publisher.Email,

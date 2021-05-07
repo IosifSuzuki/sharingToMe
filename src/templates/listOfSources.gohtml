@@ -24,7 +24,7 @@
                     {{range $index, $post := .Posts}}
                     <tr>
                         <td>{{add $index 1}}</td>
-                        <td><img height="10px" width="15px" src="{{$post.Publisher.Flag.String}}" alt="flag of the country"></td>
+                        <td><img height="10px" width="15px" src="{{$post.Publisher.IpInfo.CountryFlag}}" alt="flag of the country"></td>
                         <td>{{$post.Publisher.Nickname}}</td>
                         <td>{{$post.Description}}</td>
                         <td>{{$post.PrettyDate}}
